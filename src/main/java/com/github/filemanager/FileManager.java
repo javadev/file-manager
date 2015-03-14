@@ -1,3 +1,22 @@
+/*
+ * $Id$
+ *
+ * Copyright 2015 Valentyn Kolesnikov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.github.filemanager;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -29,19 +48,20 @@ import java.nio.channels.FileChannel;
 import java.net.URL;
 
 /**
-A basic File Manager.  Requires 1.6+ for the Desktop & SwingWorker
+A basic File Manager.  Requires 1.6+ for the Desktop &amp; SwingWorker
 classes, amongst other minor things.
 
-Includes support classes FileTableModel & FileTreeCellRenderer.
+Includes support classes FileTableModel &amp; FileTreeCellRenderer.
 
-@TODO Bugs
+TODO Bugs
+<ul>
 <li>Still throws occasional AIOOBEs and NPEs, so some update on
 the EDT must have been missed.
 <li>Fix keyboard focus issues - especially when functions like
-rename/delete etc. are called that update nodes & file lists.
+rename/delete etc. are called that update nodes &amp; file lists.
 <li>Needs more testing in general.
 
-@TODO Functionality
+TODO Functionality
 <li>Implement Read/Write/Execute checkboxes
 <li>Implement Copy
 <li>Extra prompt for directory delete (camickr suggestion)
@@ -53,13 +73,12 @@ rename/delete etc. are called that update nodes & file lists.
 <li>Implement history/back
 <li>Allow multiple selection
 <li>Add file search
+</ul>
 
 @author Andrew Thompson
 @version 2011-06-01
-@see http://stackoverflow.com/questions/6182110
-@license LGPL
 */
-class FileManager {
+public class FileManager {
 
     /** Title of the application */
     public static final String APP_TITLE = "FileMan";

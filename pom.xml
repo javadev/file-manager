@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
   <version>1.0</version>
   <name>filemanager</name>
-  <description>A java/swing basic File Manager</description>
+  <description>The java/swing basic File Manager</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,7 +33,7 @@
           <configuration>
               <archive>
                   <manifest>
-                      <mainClass>FileManager</mainClass>
+                      <mainClass>com.github.filemanager.FileManager</mainClass>
                   </manifest>
               </archive>
           </configuration>
