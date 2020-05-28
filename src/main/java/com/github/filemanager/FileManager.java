@@ -52,6 +52,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 
 import java.net.URL;
+import org.apache.commons.io.FileUtils;
 
 /**
 A basic File Manager.  Requires 1.6+ for the Desktop &amp; SwingWorker
@@ -390,7 +391,7 @@ public class FileManager {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)object;
             File nodeFile = (File)node.getUserObject();
 
-            if (nodeFile==find) {
+            if (nodeFile.equals(find)) {
                 return treePath;
             }
         }
@@ -465,8 +466,7 @@ public class FileManager {
                 System.out.println("parentNode: " + parentNode);
 
                 boolean directory = currentFile.isDirectory();
-                boolean deleted = currentFile.delete();
-                if (deleted) {
+                if (FileUtils.deleteQuietly(currentFile)) {
                     if (directory) {
                         // delete the node..
                         TreePath currentPath = findTreePath(currentFile);
