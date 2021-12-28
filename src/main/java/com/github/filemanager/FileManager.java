@@ -74,9 +74,6 @@ import org.apache.commons.io.FileUtils;
  *   <li>Allow multiple selection
  *   <li>Add file search
  * </ul>
- *
- * @author Andrew Thompson
- * @version 2011-06-01
  */
 public class FileManager {
 
