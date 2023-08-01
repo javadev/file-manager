@@ -1,7 +1,7 @@
 file-manager
 ============
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.javadev/filemanager.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.javadev%22%20AND%20a%3A%22filemanager%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.javadev/filemanager?style=flat-square)](https://central.sonatype.com/artifact/com.github.javadev/filemanager/1.1)
 [![Java CI](https://github.com/javadev/file-manager/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/file-manager/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/javadev/file-manager/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/file-manager/actions/workflows/codeql-analysis.yml)
 
