@@ -230,7 +230,9 @@ public class FileManager {
                     new ListSelectionListener() {
                         @Override
                         public void valueChanged(ListSelectionEvent lse) {
+                        	
                             int frowInd = dirListingTable.getSelectionModel().getLeadSelectionIndex();
+                          //   lse.getFirstIndex(); //TODO - get the first index of the selection
                             File f = ((FileTableModel) dirListingTable.getModel()).getFile(frowInd);
                             setFileDetails(f);
                         }
