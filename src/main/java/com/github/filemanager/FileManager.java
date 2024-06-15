@@ -24,7 +24,6 @@ SOFTWARE.
 package com.github.filemanager;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -80,9 +79,9 @@ public class FileManager {
     /** Title of the application */
     public static final String APP_TITLE = "FileMan";
     /** Used to open/edit/print files. */
-    private Desktop desktop;
+    private Desktop osDesktop;
     /** Provides nice icons and names for files. */
-    private FileSystemView fileSystemView;
+    private FileSystemView osFileSystemView;
 
     /** currently selected File. */
     private File currentFile;
@@ -96,7 +95,7 @@ public class FileManager {
     private DefaultTreeModel treeModel;
 
     /** Directory listing */
-    private JTable dirListingTable;
+    private JTable dirContentFilesTable;
 
     private JProgressBar progressBar;
     /** Table model for File[]. */
@@ -116,7 +115,7 @@ public class FileManager {
     /* File details. */
     private JLabel fileNameLb;
     private JTextField pathTF;
-    private JLabel date;
+    private JLabel fdateLb;
     private JLabel fileSizeLB;
     private JCheckBox readCBox;
     private JCheckBox writeCBox;
@@ -212,18 +211,18 @@ public class FileManager {
             mainGuiPanel = new JPanel(new BorderLayout(3, 3));
             mainGuiPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-            fileSystemView = FileSystemView.getFileSystemView();
-            desktop = Desktop.getDesktop();
+            osFileSystemView = FileSystemView.getFileSystemView();
+            osDesktop = Desktop.getDesktop();
             
             
 
             JPanel detailView = new JPanel(new BorderLayout(3, 3));
              //fileTableModel = new FileTableModel();
 
-            dirListingTable = new JTable();
-            dirListingTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            dirListingTable.setAutoCreateRowSorter(true);
-            dirListingTable.setShowVerticalLines(false);
+            dirContentFilesTable = new JTable();
+            dirContentFilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            dirContentFilesTable.setAutoCreateRowSorter(true);
+            dirContentFilesTable.setShowVerticalLines(false);
             
             /* code reacting on selection events in */
             fileListSelectionListener =
@@ -231,9 +230,9 @@ public class FileManager {
                         @Override
                         public void valueChanged(ListSelectionEvent lse) {
                         	
-                            int frowInd = dirListingTable.getSelectionModel().getLeadSelectionIndex();
+                            int frowInd = dirContentFilesTable.getSelectionModel().getLeadSelectionIndex();
                           //   lse.getFirstIndex(); //TODO - get the first index of the selection
-                            File f = ((FileTableModel) dirListingTable.getModel()).getFile(frowInd);
+                            File f = ((FileTableModel) dirContentFilesTable.getModel()).getFile(frowInd);
                             setFileDetails(f);
                         }
                     };
@@ -242,13 +241,15 @@ public class FileManager {
              * <code>dirListingTable</code>.
              *          
              */
-            dirListingTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
+            dirContentFilesTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
             
-            JScrollPane tabScrollJSPfiles = new JScrollPane(dirListingTable);
-            Dimension d = tabScrollJSPfiles.getPreferredSize();
-            tabScrollJSPfiles.setPreferredSize(
+            JScrollPane dirContJScrPan = new JScrollPane(dirContentFilesTable);
+            Dimension d = dirContJScrPan.getPreferredSize();
+            dirContJScrPan.setPreferredSize(
                     new Dimension((int) d.getWidth(), (int) d.getHeight() / 2));
-            detailView.add(tabScrollJSPfiles, BorderLayout.CENTER);
+            detailView.add(dirContJScrPan, BorderLayout.CENTER);
+            //detailView.isFocusable();  http://172.27.160.1:53067/chat/chat.html?chatSessionId=1718463828278#:~:text=I%20want%20two,to%20ensure%20this
+            System.out.println("detailView: " + detailView.isFocusable());
 
             // the File tree
             DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -265,13 +266,13 @@ public class FileManager {
                     };
 
             // show the file system roots.
-            File[] roots = fileSystemView.getRoots();
+            File[] roots = osFileSystemView.getRoots();
             for (File fileSystemRoot : roots) {
                 DefaultMutableTreeNode node = new DefaultMutableTreeNode(fileSystemRoot);
                 root.add(node);
                 // showChildren(node);
                 //
-                File[] files = fileSystemView.getFiles(fileSystemRoot, true);
+                File[] files = osFileSystemView.getFiles(fileSystemRoot, true);
                 for (File file : files) {
                     if (file.isDirectory()) {
                         node.add(new DefaultMutableTreeNode(file));
@@ -312,8 +313,8 @@ public class FileManager {
             pathTF.setEditable(false);
             fileDetailsValues.add(pathTF);
             fileDetailsLabels.add(new JLabel("Last Modified", JLabel.TRAILING));
-            date = new JLabel();
-            fileDetailsValues.add(date);
+            fdateLb = new JLabel();
+            fileDetailsValues.add(fdateLb);
             fileDetailsLabels.add(new JLabel("File size", JLabel.TRAILING));
             fileSizeLB = new JLabel();
             fileDetailsValues.add(fileSizeLB);
@@ -345,7 +346,7 @@ public class FileManager {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
-                                desktop.open(currentFile);
+                                osDesktop.open(currentFile);
                             } catch (Throwable t) {
                                 showThrowable(t);
                             }
@@ -360,7 +361,7 @@ public class FileManager {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
-                                desktop.edit(currentFile);
+                                osDesktop.edit(currentFile);
                             } catch (Throwable t) {
                                 showThrowable(t);
                             }
@@ -374,7 +375,7 @@ public class FileManager {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
-                                desktop.print(currentFile);
+                                osDesktop.print(currentFile);
                             } catch (Throwable t) {
                                 showThrowable(t);
                             }
@@ -383,9 +384,9 @@ public class FileManager {
             toolBar.add(printFileBtn);
 
             // Check the actions are supported on this platform!
-            openFileBtn.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
-            editFileBtn.setEnabled(desktop.isSupported(Desktop.Action.EDIT));
-            printFileBtn.setEnabled(desktop.isSupported(Desktop.Action.PRINT));
+            openFileBtn.setEnabled(osDesktop.isSupported(Desktop.Action.OPEN));
+            editFileBtn.setEnabled(osDesktop.isSupported(Desktop.Action.EDIT));
+            printFileBtn.setEnabled(osDesktop.isSupported(Desktop.Action.PRINT));
 
             toolBar.addSeparator();
 
@@ -662,27 +663,27 @@ public class FileManager {
                     public void run() {
                         if (fileTableModel == null) {
                             fileTableModel = new FileTableModel();
-                            dirListingTable.setModel(fileTableModel);
+                            dirContentFilesTable.setModel(fileTableModel);
                         }
-                        dirListingTable.getSelectionModel()
+                        dirContentFilesTable.getSelectionModel()
                                 .removeListSelectionListener(fileListSelectionListener);
                         fileTableModel.setFiles(files);
-                        dirListingTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
+                        dirContentFilesTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
                         if (!cellSizesSet) {
-                            Icon icon = fileSystemView.getSystemIcon(files[0]);
+                            Icon icon = osFileSystemView.getSystemIcon(files[0]);
 
                             // size adjustment to better account for icons
-                            dirListingTable.setRowHeight(icon.getIconHeight() + rowIconPadding);
+                            dirContentFilesTable.setRowHeight(icon.getIconHeight() + rowIconPadding);
 
-                            setColumnWidth(0, -1);
-                            setColumnWidth(3, 60);
-                            dirListingTable.getColumnModel().getColumn(3).setMaxWidth(120);
-                            setColumnWidth(4, -1);
-                            setColumnWidth(5, -1);
-                            setColumnWidth(6, -1);
-                            setColumnWidth(7, -1);
-                            setColumnWidth(8, -1);
-                            setColumnWidth(9, -1);
+                            setColumnWidth(0, -1, dirContentFilesTable);
+                            setColumnWidth(3, 60, dirContentFilesTable);
+                            dirContentFilesTable.getColumnModel().getColumn(3).setMaxWidth(120);
+                            setColumnWidth(4, -1, dirContentFilesTable);
+                            setColumnWidth(5, -1, dirContentFilesTable);
+                            setColumnWidth(6, -1, dirContentFilesTable);
+                            setColumnWidth(7, -1, dirContentFilesTable);
+                            setColumnWidth(8, -1, dirContentFilesTable);
+                            setColumnWidth(9, -1, dirContentFilesTable);
 
                             cellSizesSet = true;
                         }
@@ -690,8 +691,8 @@ public class FileManager {
                 });
     }
 
-    private void setColumnWidth(int column, int width) {
-        TableColumn tableColumn = dirListingTable.getColumnModel().getColumn(column);
+    private void setColumnWidth(int column, int width, JTable table) {
+        TableColumn tableColumn = table.getColumnModel().getColumn(column);
         if (width < 0) {
             // use the preferred width of the header..
             JLabel label = new JLabel((String) tableColumn.getHeaderValue());
@@ -719,7 +720,7 @@ public class FileManager {
                     public Void doInBackground() {
                         File file = (File) node.getUserObject();
                         if (file.isDirectory()) {
-                            File[] filesFromChosenDir = fileSystemView.getFiles(file, true); // !!
+                            File[] filesFromChosenDir = osFileSystemView.getFiles(file, true); // !!
                             if (node.isLeaf()) {
                                 for (File child : filesFromChosenDir) {
                                     if (child.isDirectory()) {
@@ -752,11 +753,11 @@ public class FileManager {
     /** Update the File details view with the details of this File. */
     private void setFileDetails(File file) {
         currentFile = file;
-        Icon icon = fileSystemView.getSystemIcon(file);
+        Icon icon = osFileSystemView.getSystemIcon(file);
         fileNameLb.setIcon(icon);
-        fileNameLb.setText(fileSystemView.getSystemDisplayName(file));
+        fileNameLb.setText(osFileSystemView.getSystemDisplayName(file));
         pathTF.setText(file.getPath());
-        date.setText(new Date(file.lastModified()).toString());
+        fdateLb.setText(new Date(file.lastModified()).toString());
         fileSizeLB.setText(file.length() + " bytes");
         readCBox.setSelected(file.canRead());
         writeCBox.setSelected(file.canWrite());
@@ -767,7 +768,7 @@ public class FileManager {
 
         JFrame f = (JFrame) mainGuiPanel.getTopLevelAncestor();
         if (f != null) {
-            f.setTitle(APP_TITLE + " :: " + fileSystemView.getSystemDisplayName(file));
+            f.setTitle(APP_TITLE + " :: " + osFileSystemView.getSystemDisplayName(file));
         }
 
         mainGuiPanel.repaint();
@@ -839,44 +840,3 @@ public class FileManager {
                 });
     }
 }//end of FileManager.main 
-
-/** A TreeCellRenderer for a File. */
-class FileTreeCellRenderer extends DefaultTreeCellRenderer {
-
-    private FileSystemView fileSystemView;
-
-    private JLabel label;
-
-    FileTreeCellRenderer() {
-        label = new JLabel();
-        label.setOpaque(true);
-        fileSystemView = FileSystemView.getFileSystemView();
-    }
-
-    @Override
-    public Component getTreeCellRendererComponent(
-            JTree tree,
-            Object value,
-            boolean selected,
-            boolean expanded,
-            boolean leaf,
-            int row,
-            boolean hasFocus) {
-
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-        File file = (File) node.getUserObject();
-        label.setIcon(fileSystemView.getSystemIcon(file));
-        label.setText(fileSystemView.getSystemDisplayName(file));
-        label.setToolTipText(file.getPath());
-
-        if (selected) {
-            label.setBackground(backgroundSelectionColor);
-            label.setForeground(textSelectionColor);
-        } else {
-            label.setBackground(backgroundNonSelectionColor);
-            label.setForeground(textNonSelectionColor);
-        }
-
-        return label;
-    }//getTreeCellRendererComponent END
-}//end of FileManager class
