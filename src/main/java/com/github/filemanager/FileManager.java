@@ -130,6 +130,7 @@ public class FileManager {
     private JTextField name;
 
 
+
 /**
  * The hierarchy of GUI components in the FileManager class is as follows:
  * <ul>
@@ -203,14 +204,8 @@ public class FileManager {
  *   </li>
  * </ul>
  * Please note that this hierarchy is based on the getGui() method in the FileManager class. The newFilePanel (JPanel) is created lazily and is not part of the initial hierarchy. It contains newTypeFile (JRadioButton) and name (JTextField) among other components.
- 
- * The components are added to the mainGuiPanel in the following order:
- * <ol>
- *   <li>splitPane (JSplitPane) - This is added to the center of the mainGuiPanel. The splitPane itself contains two components: treeScroll (JScrollPane) on the left and detailView (JPanel) on the right.</li>
- *   <li>simpleOutput (JPanel) - This is added to the south of the mainGuiPanel. The simpleOutput panel contains progressBar (JProgressBar).</li>
- * </ol>
- * So, the mainGuiPanel contains splitPane in the center and simpleOutput at the south.
  */
+
 
     public Container getGui() {
         if (mainGuiPanel == null) {
@@ -219,8 +214,7 @@ public class FileManager {
 
             fileSystemView = FileSystemView.getFileSystemView();
             desktop = Desktop.getDesktop();
-            JSplitPane leftPane = new JSplitPane();
-            JSplitPane rightPane = new JSplitPane();
+            
             
 
             JPanel detailView = new JPanel(new BorderLayout(3, 3));
@@ -241,7 +235,11 @@ public class FileManager {
                             setFileDetails(f);
                         }
                     };
-                    
+            /**
+             * Add the listener to the list selection model to handle selection events in the 
+             * <code>dirListingTable</code>.
+             *          
+             */
             dirListingTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
             
             JScrollPane tabScrollJSPfiles = new JScrollPane(dirListingTable);
