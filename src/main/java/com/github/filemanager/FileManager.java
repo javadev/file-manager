@@ -129,6 +129,9 @@ public class FileManager {
     private JRadioButton newTypeFile;
     private JTextField name;
 
+    /**
+     * @return
+     */
     public Container getGui() {
         if (gui == null) {
             gui = new JPanel(new BorderLayout(3, 3));
@@ -136,9 +139,12 @@ public class FileManager {
 
             fileSystemView = FileSystemView.getFileSystemView();
             desktop = Desktop.getDesktop();
+            JSplitPane leftPane = new JSplitPane();
+            JSplitPane rightPane = new JSplitPane();
+            
 
             JPanel detailView = new JPanel(new BorderLayout(3, 3));
-            // fileTableModel = new FileTableModel();
+             //fileTableModel = new FileTableModel();
 
             table = new JTable();
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -211,7 +217,7 @@ public class FileManager {
             JPanel fileDetailsLabels = new JPanel(new GridLayout(0, 1, 2, 2));
             fileMainDetails.add(fileDetailsLabels, BorderLayout.WEST);
 
-            JPanel fileDetailsValues = new JPanel(new GridLayout(0, 1, 2, 2));
+            JPanel fileDetailsValues = new JPanel(new GridLayout(0, 1, 2, 2));//file panel definitionon
             fileMainDetails.add(fileDetailsValues, BorderLayout.CENTER);
 
             fileDetailsLabels.add(new JLabel("File", JLabel.TRAILING));
