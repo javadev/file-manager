@@ -88,41 +88,41 @@ public class FileManager {
     private File currentFile;
 
     /** Main GUI container */
-    private JPanel gui;
+    private JPanel mainGuiPanel;
 
     /** File-system tree. Built Lazily */
-    private JTree tree;
+    private JTree fileSystemTree;
 
     private DefaultTreeModel treeModel;
 
     /** Directory listing */
-    private JTable table;
+    private JTable dirListingTable;
 
     private JProgressBar progressBar;
     /** Table model for File[]. */
     private FileTableModel fileTableModel;
 
-    private ListSelectionListener listSelectionListener;
+    private ListSelectionListener fileListSelectionListener;
     private boolean cellSizesSet = false;
     private int rowIconPadding = 6;
 
     /* File controls. */
-    private JButton openFile;
-    private JButton printFile;
-    private JButton editFile;
-    private JButton deleteFile;
-    private JButton newFile;
-    private JButton copyFile;
+    private JButton openFileBtn;
+    private JButton printFileBtn;
+    private JButton editFileBtn;
+    private JButton deleteFileBtn;
+    private JButton newFileBtn;
+    private JButton copyFileBtn;
     /* File details. */
-    private JLabel fileName;
-    private JTextField path;
+    private JLabel fileNameLb;
+    private JTextField pathTF;
     private JLabel date;
-    private JLabel size;
-    private JCheckBox readable;
-    private JCheckBox writable;
-    private JCheckBox executable;
-    private JRadioButton isDirectory;
-    private JRadioButton isFile;
+    private JLabel fileSizeLB;
+    private JCheckBox readCBox;
+    private JCheckBox writeCBox;
+    private JCheckBox execCBox;
+    private JRadioButton isDirRadio;
+    private JRadioButton isFileRadio;
 
     /* GUI options/containers for new File/Directory creation.  Created lazily. */
     private JPanel newFilePanel;
@@ -133,9 +133,9 @@ public class FileManager {
      * @return
      */
     public Container getGui() {
-        if (gui == null) {
-            gui = new JPanel(new BorderLayout(3, 3));
-            gui.setBorder(new EmptyBorder(5, 5, 5, 5));
+        if (mainGuiPanel == null) {
+            mainGuiPanel = new JPanel(new BorderLayout(3, 3));
+            mainGuiPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
             fileSystemView = FileSystemView.getFileSystemView();
             desktop = Desktop.getDesktop();
@@ -146,25 +146,29 @@ public class FileManager {
             JPanel detailView = new JPanel(new BorderLayout(3, 3));
              //fileTableModel = new FileTableModel();
 
-            table = new JTable();
-            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            table.setAutoCreateRowSorter(true);
-            table.setShowVerticalLines(false);
-
-            listSelectionListener =
+            dirListingTable = new JTable();
+            dirListingTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            dirListingTable.setAutoCreateRowSorter(true);
+            dirListingTable.setShowVerticalLines(false);
+            
+            /* code reacting on selection events in */
+            fileListSelectionListener =
                     new ListSelectionListener() {
                         @Override
                         public void valueChanged(ListSelectionEvent lse) {
-                            int row = table.getSelectionModel().getLeadSelectionIndex();
-                            setFileDetails(((FileTableModel) table.getModel()).getFile(row));
+                            int frowInd = dirListingTable.getSelectionModel().getLeadSelectionIndex();
+                            File f = ((FileTableModel) dirListingTable.getModel()).getFile(frowInd);
+                            setFileDetails(f);
                         }
                     };
-            table.getSelectionModel().addListSelectionListener(listSelectionListener);
-            JScrollPane tableScroll = new JScrollPane(table);
-            Dimension d = tableScroll.getPreferredSize();
-            tableScroll.setPreferredSize(
+                    
+            dirListingTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
+            
+            JScrollPane tabScrollJSPfiles = new JScrollPane(dirListingTable);
+            Dimension d = tabScrollJSPfiles.getPreferredSize();
+            tabScrollJSPfiles.setPreferredSize(
                     new Dimension((int) d.getWidth(), (int) d.getHeight() / 2));
-            detailView.add(tableScroll, BorderLayout.CENTER);
+            detailView.add(tabScrollJSPfiles, BorderLayout.CENTER);
 
             // the File tree
             DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -196,15 +200,15 @@ public class FileManager {
                 //
             }
 
-            tree = new JTree(treeModel);
-            tree.setRootVisible(false);
-            tree.addTreeSelectionListener(treeSelectionListener);
-            tree.setCellRenderer(new FileTreeCellRenderer());
-            tree.expandRow(0);
-            JScrollPane treeScroll = new JScrollPane(tree);
+            fileSystemTree = new JTree(treeModel);
+            fileSystemTree.setRootVisible(false);
+            fileSystemTree.addTreeSelectionListener(treeSelectionListener);
+            fileSystemTree.setCellRenderer(new FileTreeCellRenderer());
+            fileSystemTree.expandRow(0);
+            JScrollPane treeScroll = new JScrollPane(fileSystemTree);
 
             // as per trashgod tip
-            tree.setVisibleRowCount(15);
+            fileSystemTree.setVisibleRowCount(15);
 
             Dimension preferredSize = treeScroll.getPreferredSize();
             Dimension widePreferred = new Dimension(200, (int) preferredSize.getHeight());
@@ -221,28 +225,28 @@ public class FileManager {
             fileMainDetails.add(fileDetailsValues, BorderLayout.CENTER);
 
             fileDetailsLabels.add(new JLabel("File", JLabel.TRAILING));
-            fileName = new JLabel();
-            fileDetailsValues.add(fileName);
+            fileNameLb = new JLabel();
+            fileDetailsValues.add(fileNameLb);
             fileDetailsLabels.add(new JLabel("Path/name", JLabel.TRAILING));
-            path = new JTextField(5);
-            path.setEditable(false);
-            fileDetailsValues.add(path);
+            pathTF = new JTextField(5);
+            pathTF.setEditable(false);
+            fileDetailsValues.add(pathTF);
             fileDetailsLabels.add(new JLabel("Last Modified", JLabel.TRAILING));
             date = new JLabel();
             fileDetailsValues.add(date);
             fileDetailsLabels.add(new JLabel("File size", JLabel.TRAILING));
-            size = new JLabel();
-            fileDetailsValues.add(size);
+            fileSizeLB = new JLabel();
+            fileDetailsValues.add(fileSizeLB);
             fileDetailsLabels.add(new JLabel("Type", JLabel.TRAILING));
 
             JPanel flags = new JPanel(new FlowLayout(FlowLayout.LEADING, 4, 0));
-            isDirectory = new JRadioButton("Directory");
-            isDirectory.setEnabled(false);
-            flags.add(isDirectory);
+            isDirRadio = new JRadioButton("Directory");
+            isDirRadio.setEnabled(false);
+            flags.add(isDirRadio);
 
-            isFile = new JRadioButton("File");
-            isFile.setEnabled(false);
-            flags.add(isFile);
+            isFileRadio = new JRadioButton("File");
+            isFileRadio.setEnabled(false);
+            flags.add(isFileRadio);
             fileDetailsValues.add(flags);
 
             int count = fileDetailsLabels.getComponentCount();
@@ -254,10 +258,10 @@ public class FileManager {
             // mnemonics stop working in a floated toolbar
             toolBar.setFloatable(false);
 
-            openFile = new JButton("Open");
-            openFile.setMnemonic('o');
+            openFileBtn = new JButton("Open");
+            openFileBtn.setMnemonic('o');
 
-            openFile.addActionListener(
+            openFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
@@ -265,14 +269,14 @@ public class FileManager {
                             } catch (Throwable t) {
                                 showThrowable(t);
                             }
-                            gui.repaint();
+                            mainGuiPanel.repaint();
                         }
                     });
-            toolBar.add(openFile);
+            toolBar.add(openFileBtn);
 
-            editFile = new JButton("Edit");
-            editFile.setMnemonic('e');
-            editFile.addActionListener(
+            editFileBtn = new JButton("Edit");
+            editFileBtn.setMnemonic('e');
+            editFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
@@ -282,11 +286,11 @@ public class FileManager {
                             }
                         }
                     });
-            toolBar.add(editFile);
+            toolBar.add(editFileBtn);
 
-            printFile = new JButton("Print");
-            printFile.setMnemonic('p');
-            printFile.addActionListener(
+            printFileBtn = new JButton("Print");
+            printFileBtn.setMnemonic('p');
+            printFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             try {
@@ -296,34 +300,34 @@ public class FileManager {
                             }
                         }
                     });
-            toolBar.add(printFile);
+            toolBar.add(printFileBtn);
 
             // Check the actions are supported on this platform!
-            openFile.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
-            editFile.setEnabled(desktop.isSupported(Desktop.Action.EDIT));
-            printFile.setEnabled(desktop.isSupported(Desktop.Action.PRINT));
+            openFileBtn.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
+            editFileBtn.setEnabled(desktop.isSupported(Desktop.Action.EDIT));
+            printFileBtn.setEnabled(desktop.isSupported(Desktop.Action.PRINT));
 
             toolBar.addSeparator();
 
-            newFile = new JButton("New");
-            newFile.setMnemonic('n');
-            newFile.addActionListener(
+            newFileBtn = new JButton("New");
+            newFileBtn.setMnemonic('n');
+            newFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             newFile();
                         }
                     });
-            toolBar.add(newFile);
+            toolBar.add(newFileBtn);
 
-            copyFile = new JButton("Copy");
-            copyFile.setMnemonic('c');
-            copyFile.addActionListener(
+            copyFileBtn = new JButton("Copy");
+            copyFileBtn.setMnemonic('c');
+            copyFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             showErrorMessage("'Copy' not implemented.", "Not implemented.");
                         }
                     });
-            toolBar.add(copyFile);
+            toolBar.add(copyFileBtn);
 
             JButton renameFile = new JButton("Rename");
             renameFile.setMnemonic('r');
@@ -335,32 +339,32 @@ public class FileManager {
                     });
             toolBar.add(renameFile);
 
-            deleteFile = new JButton("Delete");
-            deleteFile.setMnemonic('d');
-            deleteFile.addActionListener(
+            deleteFileBtn = new JButton("Delete");
+            deleteFileBtn.setMnemonic('d');
+            deleteFileBtn.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             deleteFile();
                         }
                     });
-            toolBar.add(deleteFile);
+            toolBar.add(deleteFileBtn);
 
             toolBar.addSeparator();
 
-            readable = new JCheckBox("Read  ");
-            readable.setMnemonic('a');
+            readCBox = new JCheckBox("Read  ");
+            readCBox.setMnemonic('a');
             // readable.setEnabled(false);
-            toolBar.add(readable);
+            toolBar.add(readCBox);
 
-            writable = new JCheckBox("Write  ");
-            writable.setMnemonic('w');
+            writeCBox = new JCheckBox("Write  ");
+            writeCBox.setMnemonic('w');
             // writable.setEnabled(false);
-            toolBar.add(writable);
+            toolBar.add(writeCBox);
 
-            executable = new JCheckBox("Execute");
-            executable.setMnemonic('x');
+            execCBox = new JCheckBox("Execute");
+            execCBox.setMnemonic('x');
             // executable.setEnabled(false);
-            toolBar.add(executable);
+            toolBar.add(execCBox);
 
             JPanel fileView = new JPanel(new BorderLayout(3, 3));
 
@@ -371,26 +375,26 @@ public class FileManager {
 
             JSplitPane splitPane =
                     new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, detailView);
-            gui.add(splitPane, BorderLayout.CENTER);
+            mainGuiPanel.add(splitPane, BorderLayout.CENTER);
 
             JPanel simpleOutput = new JPanel(new BorderLayout(3, 3));
             progressBar = new JProgressBar();
             simpleOutput.add(progressBar, BorderLayout.EAST);
             progressBar.setVisible(false);
 
-            gui.add(simpleOutput, BorderLayout.SOUTH);
+            mainGuiPanel.add(simpleOutput, BorderLayout.SOUTH);
         }
-        return gui;
+        return mainGuiPanel;
     }
 
     public void showRootFile() {
         // ensure the main files are displayed
-        tree.setSelectionInterval(0, 0);
+        fileSystemTree.setSelectionInterval(0, 0);
     }
 
     private TreePath findTreePath(File find) {
-        for (int ii = 0; ii < tree.getRowCount(); ii++) {
-            TreePath treePath = tree.getPathForRow(ii);
+        for (int ii = 0; ii < fileSystemTree.getRowCount(); ii++) {
+            TreePath treePath = fileSystemTree.getPathForRow(ii);
             Object object = treePath.getLastPathComponent();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
             File nodeFile = (File) node.getUserObject();
@@ -409,7 +413,7 @@ public class FileManager {
             return;
         }
 
-        String renameTo = JOptionPane.showInputDialog(gui, "New Name");
+        String renameTo = JOptionPane.showInputDialog(mainGuiPanel, "New Name");
         if (renameTo != null) {
             try {
                 boolean directory = currentFile.isDirectory();
@@ -443,7 +447,7 @@ public class FileManager {
                 showThrowable(t);
             }
         }
-        gui.repaint();
+        mainGuiPanel.repaint();
     }
 
     private void deleteFile() {
@@ -454,7 +458,7 @@ public class FileManager {
 
         int result =
                 JOptionPane.showConfirmDialog(
-                        gui,
+                        mainGuiPanel,
                         "Are you sure you want to delete this file?",
                         "Delete File",
                         JOptionPane.ERROR_MESSAGE);
@@ -488,7 +492,7 @@ public class FileManager {
                 showThrowable(t);
             }
         }
-        gui.repaint();
+        mainGuiPanel.repaint();
     }
 
     private void newFile() {
@@ -518,7 +522,7 @@ public class FileManager {
 
         int result =
                 JOptionPane.showConfirmDialog(
-                        gui, newFilePanel, "Create File", JOptionPane.OK_CANCEL_OPTION);
+                        mainGuiPanel, newFilePanel, "Create File", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 boolean created;
@@ -558,17 +562,17 @@ public class FileManager {
                 showThrowable(t);
             }
         }
-        gui.repaint();
+        mainGuiPanel.repaint();
     }
 
     private void showErrorMessage(String errorMessage, String errorTitle) {
-        JOptionPane.showMessageDialog(gui, errorMessage, errorTitle, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainGuiPanel, errorMessage, errorTitle, JOptionPane.ERROR_MESSAGE);
     }
 
     private void showThrowable(Throwable t) {
         t.printStackTrace();
-        JOptionPane.showMessageDialog(gui, t.toString(), t.getMessage(), JOptionPane.ERROR_MESSAGE);
-        gui.repaint();
+        JOptionPane.showMessageDialog(mainGuiPanel, t.toString(), t.getMessage(), JOptionPane.ERROR_MESSAGE);
+        mainGuiPanel.repaint();
     }
 
     /** Update the table on the EDT */
@@ -578,21 +582,21 @@ public class FileManager {
                     public void run() {
                         if (fileTableModel == null) {
                             fileTableModel = new FileTableModel();
-                            table.setModel(fileTableModel);
+                            dirListingTable.setModel(fileTableModel);
                         }
-                        table.getSelectionModel()
-                                .removeListSelectionListener(listSelectionListener);
+                        dirListingTable.getSelectionModel()
+                                .removeListSelectionListener(fileListSelectionListener);
                         fileTableModel.setFiles(files);
-                        table.getSelectionModel().addListSelectionListener(listSelectionListener);
+                        dirListingTable.getSelectionModel().addListSelectionListener(fileListSelectionListener);
                         if (!cellSizesSet) {
                             Icon icon = fileSystemView.getSystemIcon(files[0]);
 
                             // size adjustment to better account for icons
-                            table.setRowHeight(icon.getIconHeight() + rowIconPadding);
+                            dirListingTable.setRowHeight(icon.getIconHeight() + rowIconPadding);
 
                             setColumnWidth(0, -1);
                             setColumnWidth(3, 60);
-                            table.getColumnModel().getColumn(3).setMaxWidth(120);
+                            dirListingTable.getColumnModel().getColumn(3).setMaxWidth(120);
                             setColumnWidth(4, -1);
                             setColumnWidth(5, -1);
                             setColumnWidth(6, -1);
@@ -607,7 +611,7 @@ public class FileManager {
     }
 
     private void setColumnWidth(int column, int width) {
-        TableColumn tableColumn = table.getColumnModel().getColumn(column);
+        TableColumn tableColumn = dirListingTable.getColumnModel().getColumn(column);
         if (width < 0) {
             // use the preferred width of the header..
             JLabel label = new JLabel((String) tableColumn.getHeaderValue());
@@ -625,7 +629,7 @@ public class FileManager {
      * Of Eels.
      */
     private void showChildren(final DefaultMutableTreeNode node) {
-        tree.setEnabled(false);
+        fileSystemTree.setEnabled(false);
         progressBar.setVisible(true);
         progressBar.setIndeterminate(true);
 
@@ -635,17 +639,17 @@ public class FileManager {
                     public Void doInBackground() {
                         File file = (File) node.getUserObject();
                         if (file.isDirectory()) {
-                            File[] files = fileSystemView.getFiles(file, true); // !!
+                            File[] filesFromChosenDir = fileSystemView.getFiles(file, true); // !!
                             if (node.isLeaf()) {
-                                for (File child : files) {
+                                for (File child : filesFromChosenDir) {
                                     if (child.isDirectory()) {
                                         publish(child);
                                     }
                                 }
                             }
-                            setTableData(files);
+                            setTableData(filesFromChosenDir);
                         }
-                        return null;
+                        return null;//In case of plain file do nothing
                     }
 
                     @Override
@@ -659,7 +663,7 @@ public class FileManager {
                     protected void done() {
                         progressBar.setIndeterminate(false);
                         progressBar.setVisible(false);
-                        tree.setEnabled(true);
+                        fileSystemTree.setEnabled(true);
                     }
                 };
         worker.execute();
@@ -669,24 +673,24 @@ public class FileManager {
     private void setFileDetails(File file) {
         currentFile = file;
         Icon icon = fileSystemView.getSystemIcon(file);
-        fileName.setIcon(icon);
-        fileName.setText(fileSystemView.getSystemDisplayName(file));
-        path.setText(file.getPath());
+        fileNameLb.setIcon(icon);
+        fileNameLb.setText(fileSystemView.getSystemDisplayName(file));
+        pathTF.setText(file.getPath());
         date.setText(new Date(file.lastModified()).toString());
-        size.setText(file.length() + " bytes");
-        readable.setSelected(file.canRead());
-        writable.setSelected(file.canWrite());
-        executable.setSelected(file.canExecute());
-        isDirectory.setSelected(file.isDirectory());
+        fileSizeLB.setText(file.length() + " bytes");
+        readCBox.setSelected(file.canRead());
+        writeCBox.setSelected(file.canWrite());
+        execCBox.setSelected(file.canExecute());
+        isDirRadio.setSelected(file.isDirectory());
 
-        isFile.setSelected(file.isFile());
+        isFileRadio.setSelected(file.isFile());
 
-        JFrame f = (JFrame) gui.getTopLevelAncestor();
+        JFrame f = (JFrame) mainGuiPanel.getTopLevelAncestor();
         if (f != null) {
             f.setTitle(APP_TITLE + " :: " + fileSystemView.getSystemDisplayName(file));
         }
 
-        gui.repaint();
+        mainGuiPanel.repaint();
     }
 
     public static boolean copyFile(File from, File to) throws IOException {
@@ -717,7 +721,7 @@ public class FileManager {
             }
         }
         return created;
-    }
+    }//end of copyFile
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(
@@ -754,93 +758,7 @@ public class FileManager {
                     }
                 });
     }
-}
-
-/** A TableModel to hold File[]. */
-class FileTableModel extends AbstractTableModel {
-
-    private File[] files;
-    private FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-    private String[] columns = {
-        "Icon", "File", "Path/name", "Size", "Last Modified", "R", "W", "E", "D", "F",
-    };
-
-    FileTableModel() {
-        this(new File[0]);
-    }
-
-    FileTableModel(File[] files) {
-        this.files = files;
-    }
-
-    public Object getValueAt(int row, int column) {
-        File file = files[row];
-        switch (column) {
-            case 0:
-                return fileSystemView.getSystemIcon(file);
-            case 1:
-                return fileSystemView.getSystemDisplayName(file);
-            case 2:
-                return file.getPath();
-            case 3:
-                return file.length();
-            case 4:
-                return file.lastModified();
-            case 5:
-                return file.canRead();
-            case 6:
-                return file.canWrite();
-            case 7:
-                return file.canExecute();
-            case 8:
-                return file.isDirectory();
-            case 9:
-                return file.isFile();
-            default:
-                System.err.println("Logic Error");
-        }
-        return "";
-    }
-
-    public int getColumnCount() {
-        return columns.length;
-    }
-
-    public Class<?> getColumnClass(int column) {
-        switch (column) {
-            case 0:
-                return ImageIcon.class;
-            case 3:
-                return Long.class;
-            case 4:
-                return Date.class;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                return Boolean.class;
-        }
-        return String.class;
-    }
-
-    public String getColumnName(int column) {
-        return columns[column];
-    }
-
-    public int getRowCount() {
-        return files.length;
-    }
-
-    public File getFile(int row) {
-        return files[row];
-    }
-
-    public void setFiles(File[] files) {
-        this.files = files;
-        fireTableDataChanged();
-    }
-}
+}//end of FileManager.main 
 
 /** A TreeCellRenderer for a File. */
 class FileTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -880,5 +798,5 @@ class FileTreeCellRenderer extends DefaultTreeCellRenderer {
         }
 
         return label;
-    }
-}
+    }//getTreeCellRendererComponent END
+}//end of FileManager class
