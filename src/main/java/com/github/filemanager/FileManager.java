@@ -129,9 +129,89 @@ public class FileManager {
     private JRadioButton newTypeFile;
     private JTextField name;
 
-    /**
-     * @return
-     */
+
+/**
+ * The hierarchy of GUI components in the FileManager class is as follows:
+ * <ul>
+ *   <li>mainGuiPanel (JPanel)
+ *     <ul>
+ *       <li>splitPane (JSplitPane)
+ *         <ul>
+ *           <li>treeScroll (JScrollPane)
+ *             <ul>
+ *               <li>fileSystemTree (JTree)</li>
+ *             </ul>
+ *           </li>
+ *           <li>detailView (JPanel)
+ *             <ul>
+ *               <li>tabScrollJSPfiles (JScrollPane)
+ *                 <ul>
+ *                   <li>dirListingTable (JTable)</li>
+ *                 </ul>
+ *               </li>
+ *               <li>fileView (JPanel)
+ *                 <ul>
+ *                   <li>toolBar (JToolBar)
+ *                     <ul>
+ *                       <li>openFileBtn (JButton)</li>
+ *                       <li>editFileBtn (JButton)</li>
+ *                       <li>printFileBtn (JButton)</li>
+ *                       <li>newFileBtn (JButton)</li>
+ *                       <li>copyFileBtn (JButton)</li>
+ *                       <li>renameFile (JButton)</li>
+ *                       <li>deleteFileBtn (JButton)</li>
+ *                       <li>readCBox (JCheckBox)</li>
+ *                       <li>writeCBox (JCheckBox)</li>
+ *                       <li>execCBox (JCheckBox)</li>
+ *                     </ul>
+ *                   </li>
+ *                   <li>fileMainDetails (JPanel)
+ *                     <ul>
+ *                       <li>fileDetailsLabels (JPanel)
+ *                         <ul>
+ *                           <li>Various JLabels</li>
+ *                         </ul>
+ *                       </li>
+ *                       <li>fileDetailsValues (JPanel)
+ *                         <ul>
+ *                           <li>fileNameLb (JLabel)</li>
+ *                           <li>pathTF (JTextField)</li>
+ *                           <li>date (JLabel)</li>
+ *                           <li>fileSizeLB (JLabel)</li>
+ *                           <li>flags (JPanel)
+ *                             <ul>
+ *                               <li>isDirRadio (JRadioButton)</li>
+ *                               <li>isFileRadio (JRadioButton)</li>
+ *                             </ul>
+ *                           </li>
+ *                         </ul>
+ *                       </li>
+ *                     </ul>
+ *                   </li>
+ *                 </ul>
+ *               </li>
+ *             </ul>
+ *           </li>
+ *         </ul>
+ *       </li>
+ *       <li>simpleOutput (JPanel)
+ *         <ul>
+ *           <li>progressBar (JProgressBar)</li>
+ *         </ul>
+ *       </li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ * Please note that this hierarchy is based on the getGui() method in the FileManager class. The newFilePanel (JPanel) is created lazily and is not part of the initial hierarchy. It contains newTypeFile (JRadioButton) and name (JTextField) among other components.
+ 
+ * The components are added to the mainGuiPanel in the following order:
+ * <ol>
+ *   <li>splitPane (JSplitPane) - This is added to the center of the mainGuiPanel. The splitPane itself contains two components: treeScroll (JScrollPane) on the left and detailView (JPanel) on the right.</li>
+ *   <li>simpleOutput (JPanel) - This is added to the south of the mainGuiPanel. The simpleOutput panel contains progressBar (JProgressBar).</li>
+ * </ol>
+ * So, the mainGuiPanel contains splitPane in the center and simpleOutput at the south.
+ */
+
     public Container getGui() {
         if (mainGuiPanel == null) {
             mainGuiPanel = new JPanel(new BorderLayout(3, 3));
