@@ -209,13 +209,14 @@ public class FileManager {
 	 * (JTextField) among other components.
 	 */
 
+
+
 	public Container getGui() {
 		if (mainGuiPanel == null) {
 			mainGuiPanel = new JPanel(new BorderLayout(3, 3));
 			mainGuiPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 			JPanel detailView = new JPanel(new BorderLayout(3, 3));
-			// fileTableModel = new FileTableModel();
 
 			dirContentFilesTable = createFilesTable();
 
@@ -225,36 +226,30 @@ public class FileManager {
 
 			treeModel = createTreeModel();
 
-			fileSystemJTree = createFileSystemJtree(treeModel);//
+			fileSystemJTree = createFileSystemJtree(treeModel);
 
 			JScrollPane treeScroll = new JScrollPane(fileSystemJTree);
 
 			adjustFileTreeScroll(treeScroll);
 
-			// details for a File
-
-			JPanel fileMainDetJPanel = createFileMainDetailsPanel();
-
-			// toolBar creation and adjustment BEGIN
-			JToolBar toolBar = createToolBar();
-			// toolBar creation and adjustment END
-
-			JPanel fileView = new JPanel(new BorderLayout(3, 3));
-
-			fileView.add(toolBar, BorderLayout.NORTH);
-			fileView.add(fileMainDetJPanel, BorderLayout.CENTER);
-
-			detailView.add(fileView, BorderLayout.SOUTH);
-
 			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, detailView);
 			mainGuiPanel.add(splitPane, BorderLayout.CENTER);
+
+			// Moved fileView to mainGuiPanel
+			JPanel fileView = new JPanel(new BorderLayout(3, 3));
+			JToolBar toolBar = createToolBar();
+			fileView.add(toolBar, BorderLayout.NORTH);
+			JPanel fileMainDetails = createFileMainDetailsPanel();
+			fileView.add(fileMainDetails, BorderLayout.CENTER);
+			fileView.setVisible(true);
+			mainGuiPanel.add(fileView, BorderLayout.SOUTH);
 
 			JPanel simpleOutput = new JPanel(new BorderLayout(3, 3));
 			progressBar = new JProgressBar();
 			simpleOutput.add(progressBar, BorderLayout.EAST);
-			progressBar.setVisible(false);
+			progressBar.setVisible(true);
 
-			mainGuiPanel.add(simpleOutput, BorderLayout.SOUTH);
+			mainGuiPanel.add(simpleOutput, BorderLayout.NORTH); // Changed from PAGE_END to NORTH
 		}
 		return mainGuiPanel;
 	}

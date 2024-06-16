@@ -1,4 +1,4 @@
-I want two panels exactly like detailView side by side. Depending on which one is focused on the choice made in fileSystemTree will be reflected in currently focused panel
+I want two panels exactly like detailView side by side. Depending on which one is focused on the choice made in fileSystemJTree will be reflected in currently focused panel
 
 
 Copilot4Eclipse
