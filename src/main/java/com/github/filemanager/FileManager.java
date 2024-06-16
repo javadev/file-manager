@@ -786,15 +786,12 @@ public class FileManager {
 	}
 
 	public static boolean copyFile(File from, File to) throws IOException {
-
 		boolean created = to.createNewFile();
 
 		if (created) {
-			FileChannel fromChannel = null;
-			FileChannel toChannel = null;
-			try {
-				fromChannel = new FileInputStream(from).getChannel();
-				toChannel = new FileOutputStream(to).getChannel();
+			try (FileInputStream fis = new FileInputStream(from); FileOutputStream fos = new FileOutputStream(to)) {
+				FileChannel fromChannel = fis.getChannel();
+				FileChannel toChannel = fos.getChannel();
 
 				toChannel.transferFrom(fromChannel, 0, fromChannel.size());
 
@@ -802,18 +799,12 @@ public class FileManager {
 				to.setReadable(from.canRead());
 				to.setWritable(from.canWrite());
 				to.setExecutable(from.canExecute());
-			} finally {
-				if (fromChannel != null) {
-					fromChannel.close();
-				}
-				if (toChannel != null) {
-					toChannel.close();
-				}
-				return false;
 			}
 		}
 		return created;
-	}// end of copyFile
+	}
+
+// end of copyFile
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -860,4 +851,4 @@ public class FileManager {
 		mainGuiPanel.repaint();
 	}
 
-}// end of FileManager.main
+}// end of FileManager class
