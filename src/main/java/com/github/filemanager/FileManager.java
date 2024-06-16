@@ -786,6 +786,7 @@ public class FileManager {
 				toChannel.transferFrom(fromChannel, 0, fromChannel.size());
 
 				// set the flags of the to the same as the from
+				//mico change for github test
 				to.setReadable(from.canRead());
 				to.setWritable(from.canWrite());
 				to.setExecutable(from.canExecute());
