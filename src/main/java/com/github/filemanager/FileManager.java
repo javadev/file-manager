@@ -31,7 +31,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.FileChannel;
@@ -143,49 +142,48 @@ public class FileManager {
 	 * <ul>
 	 * <li>treeScroll (JScrollPane)
 	 * <ul>
-	 * <li>fileSystemTree (JTree)</li>
+	 * <li>fileSystemJTree (JTree)
 	 * </ul>
 	 * </li>
 	 * <li>detailView (JPanel)
 	 * <ul>
-	 * <li>tabScrollJSPfiles (JScrollPane)
+	 * <li>dirContJScrPan (JScrollPane)
 	 * <ul>
-	 * <li>dirListingTable (JTable)</li>
+	 * <li>dirContentFilesTable (JTable)
 	 * </ul>
 	 * </li>
 	 * <li>fileView (JPanel)
 	 * <ul>
 	 * <li>toolBar (JToolBar)
 	 * <ul>
-	 * <li>openFileBtn (JButton)</li>
-	 * <li>editFileBtn (JButton)</li>
-	 * <li>printFileBtn (JButton)</li>
-	 * <li>newFileBtn (JButton)</li>
-	 * <li>copyFileBtn (JButton)</li>
-	 * <li>renameFile (JButton)</li>
-	 * <li>deleteFileBtn (JButton)</li>
-	 * <li>readCBox (JCheckBox)</li>
-	 * <li>writeCBox (JCheckBox)</li>
-	 * <li>execCBox (JCheckBox)</li>
+	 * <li>openFileBtn (JButton)
+	 * <li>editFileBtn (JButton)
+	 * <li>printFileBtn (JButton)
+	 * <li>newFileBtn (JButton)
+	 * <li>copyFileBtn (JButton)
+	 * <li>deleteFileBtn (JButton)
+	 * <li>readCBox (JCheckBox)
+	 * <li>writeCBox (JCheckBox)
+	 * <li>execCBox (JCheckBox)
 	 * </ul>
 	 * </li>
 	 * <li>fileMainDetails (JPanel)
 	 * <ul>
 	 * <li>fileDetailsLabels (JPanel)
 	 * <ul>
-	 * <li>Various JLabels</li>
+	 * <li>Various JLabels
 	 * </ul>
 	 * </li>
 	 * <li>fileDetailsValues (JPanel)
 	 * <ul>
-	 * <li>fileNameLb (JLabel)</li>
-	 * <li>pathTF (JTextField)</li>
-	 * <li>date (JLabel)</li>
-	 * <li>fileSizeLB (JLabel)</li>
+	 * <li>fileNameLb (JLabel)
+	 * <li>pathTF (JTextField)
+	 * <li>date (JLabel)
+	 * <li>fileSizeLB (JLabel)
 	 * <li>flags (JPanel)
 	 * <ul>
-	 * <li>isDirRadio (JRadioButton)</li>
-	 * <li>isFileRadio (JRadioButton)</li>
+	 * <li>isDirRadio (JRadioButton)
+	 * <li>isFileRadio (JRadioButton)
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -200,16 +198,15 @@ public class FileManager {
 	 * </li>
 	 * <li>simpleOutput (JPanel)
 	 * <ul>
-	 * <li>progressBar (JProgressBar)</li>
+	 * <li>progressBar (JProgressBar)
 	 * </ul>
 	 * </li>
 	 * </ul>
 	 * </li>
 	 * </ul>
-	 * Please note that this hierarchy is based on the getGui() method in the
-	 * FileManager class. The newFilePanel (JPanel) is created lazily and is not
-	 * part of the initial hierarchy. It contains newTypeFile (JRadioButton) and
-	 * name (JTextField) among other components.
+	 * Please note that the newFilePanel (JPanel) is created lazily and is not part
+	 * of the initial hierarchy. It contains newTypeFile (JRadioButton) and name
+	 * (JTextField) among other components.
 	 */
 
 	public Container getGui() {
@@ -223,23 +220,23 @@ public class FileManager {
 			dirContentFilesTable = createFilesTable();
 
 			JScrollPane dirContJScrPan = createFilesTableScrollPane(dirContentFilesTable);
-			
+
 			detailView.add(dirContJScrPan, BorderLayout.CENTER);
-			
+
 			treeModel = createTreeModel();
-						
+
 			fileSystemJTree = createFileSystemJtree(treeModel);//
-			
+
 			JScrollPane treeScroll = new JScrollPane(fileSystemJTree);
-			
+
 			adjustFileTreeScroll(treeScroll);
 
 			// details for a File
 
 			JPanel fileMainDetJPanel = createFileMainDetailsPanel();
-		
-			//  toolBar creation and adjustment BEGIN
-			JToolBar toolBar = createToolBar(); 
+
+			// toolBar creation and adjustment BEGIN
+			JToolBar toolBar = createToolBar();
 			// toolBar creation and adjustment END
 
 			JPanel fileView = new JPanel(new BorderLayout(3, 3));
@@ -263,49 +260,47 @@ public class FileManager {
 	}
 
 	private JPanel createFileMainDetailsPanel() {
-		
 
-    JPanel localFileMainDetJPanel = new JPanel(new BorderLayout(4, 2));
-    localFileMainDetJPanel.setBorder(new EmptyBorder(0, 6, 0, 6));
+		JPanel localFileMainDetJPanel = new JPanel(new BorderLayout(4, 2));
+		localFileMainDetJPanel.setBorder(new EmptyBorder(0, 6, 0, 6));
 
-    JPanel localFileDetLabJPanel = new JPanel(new GridLayout(0, 1, 2, 2));
-    localFileMainDetJPanel.add(localFileDetLabJPanel, BorderLayout.WEST);
+		JPanel localFileDetLabJPanel = new JPanel(new GridLayout(0, 1, 2, 2));
+		localFileMainDetJPanel.add(localFileDetLabJPanel, BorderLayout.WEST);
 
-    JPanel fileDetailsValues = new JPanel(new GridLayout(0, 1, 2, 2));
-    localFileMainDetJPanel.add(fileDetailsValues, BorderLayout.CENTER);
+		JPanel fileDetailsValues = new JPanel(new GridLayout(0, 1, 2, 2));
+		localFileMainDetJPanel.add(fileDetailsValues, BorderLayout.CENTER);
 
-    localFileDetLabJPanel.add(new JLabel("File", JLabel.TRAILING));
-    fileNameLb = new JLabel();
-    fileDetailsValues.add(fileNameLb);
-    localFileDetLabJPanel.add(new JLabel("Path/name", JLabel.TRAILING));
-    pathTF = new JTextField(5);
-    pathTF.setEditable(false);
-    fileDetailsValues.add(pathTF);
-    localFileDetLabJPanel.add(new JLabel("Last Modified", JLabel.TRAILING));
-    fdateLb = new JLabel();
-    fileDetailsValues.add(fdateLb);
-    localFileDetLabJPanel.add(new JLabel("File size", JLabel.TRAILING));
-    fileSizeLB = new JLabel();
-    fileDetailsValues.add(fileSizeLB);
-    localFileDetLabJPanel.add(new JLabel("Type", JLabel.TRAILING));
+		localFileDetLabJPanel.add(new JLabel("File", JLabel.TRAILING));
+		fileNameLb = new JLabel();
+		fileDetailsValues.add(fileNameLb);
+		localFileDetLabJPanel.add(new JLabel("Path/name", JLabel.TRAILING));
+		pathTF = new JTextField(5);
+		pathTF.setEditable(false);
+		fileDetailsValues.add(pathTF);
+		localFileDetLabJPanel.add(new JLabel("Last Modified", JLabel.TRAILING));
+		fdateLb = new JLabel();
+		fileDetailsValues.add(fdateLb);
+		localFileDetLabJPanel.add(new JLabel("File size", JLabel.TRAILING));
+		fileSizeLB = new JLabel();
+		fileDetailsValues.add(fileSizeLB);
+		localFileDetLabJPanel.add(new JLabel("Type", JLabel.TRAILING));
 
-    JPanel flags = new JPanel(new FlowLayout(FlowLayout.LEADING, 4, 0));
-    isDirRadio = new JRadioButton("Directory");
-    isDirRadio.setEnabled(false);
-    flags.add(isDirRadio);
+		JPanel flags = new JPanel(new FlowLayout(FlowLayout.LEADING, 4, 0));
+		isDirRadio = new JRadioButton("Directory");
+		isDirRadio.setEnabled(false);
+		flags.add(isDirRadio);
 
-    isFileRadio = new JRadioButton("File");
-    isFileRadio.setEnabled(false);
-    flags.add(isFileRadio);
-    fileDetailsValues.add(flags);
+		isFileRadio = new JRadioButton("File");
+		isFileRadio.setEnabled(false);
+		flags.add(isFileRadio);
+		fileDetailsValues.add(flags);
 
-    int count = localFileDetLabJPanel.getComponentCount();
-    for (int ii = 0; ii < count; ii++) {
-        localFileDetLabJPanel.getComponent(ii).setEnabled(false);
-    }
+		int count = localFileDetLabJPanel.getComponentCount();
+		for (int ii = 0; ii < count; ii++) {
+			localFileDetLabJPanel.getComponent(ii).setEnabled(false);
+		}
 
-    return localFileMainDetJPanel;
-
+		return localFileMainDetJPanel;
 
 	}
 
@@ -424,7 +419,7 @@ public class FileManager {
 	}
 
 	private JTree createFileSystemJtree(DefaultTreeModel pramJTreeModel) {
-		
+
 		TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent tse) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) fileSystemJTree.getLastSelectedPathComponent();
@@ -452,7 +447,6 @@ public class FileManager {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 		DefaultTreeModel localtreeModel = new DefaultTreeModel(root);
 
-		
 		// show the file system roots.
 		File[] roots = osFileSystemView.getRoots();
 		for (File fileSystemRoot : roots) {
@@ -652,6 +646,7 @@ public class FileManager {
 						DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file);
 
 						TreePath currentPath = findTreePath(currentFile);
+						//POTENTIAL BUG
 						DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) currentPath
 								.getLastPathComponent();
 

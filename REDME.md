@@ -69,7 +69,37 @@ It is added to a JSplitPane named splitPane.
 JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, detailView);
 Please note that the detailView instance itself does not have any event listeners attached to it or any methods invoked on it directly. It is mainly used as a container to hold other components.
 
-Using 1 Reference
- What are some best practices for organizing GUI components in a Java application?
 
+- `mainGuiPanel` (JPanel)
+  - `splitPane` (JSplitPane)
+    - `treeScroll` (JScrollPane)
+      - `fileSystemJTree` (JTree)
+    - `detailView` (JPanel)
+      - `dirContJScrPan` (JScrollPane)
+        - `dirContentFilesTable` (JTable)
+      - `fileView` (JPanel)
+        - `toolBar` (JToolBar)
+          - `openFileBtn` (JButton)
+          - `editFileBtn` (JButton)
+          - `printFileBtn` (JButton)
+          - `newFileBtn` (JButton)
+          - `copyFileBtn` (JButton)
+          - `deleteFileBtn` (JButton)
+          - `readCBox` (JCheckBox)
+          - `writeCBox` (JCheckBox)
+          - `execCBox` (JCheckBox)
+        - `fileMainDetails` (JPanel)
+          - `fileDetailsLabels` (JPanel)
+            - Various JLabels
+          - `fileDetailsValues` (JPanel)
+            - `fileNameLb` (JLabel)
+            - `pathTF` (JTextField)
+            - `date` (JLabel)
+            - `fileSizeLB` (JLabel)
+            - `flags` (JPanel)
+              - `isDirRadio` (JRadioButton)
+              - `isFileRadio` (JRadioButton)
+  - `simpleOutput` (JPanel)
+    - `progressBar` (JProgressBar)
 
+Please note that the `newFilePanel` (JPanel) is created lazily and is not part of the initial hierarchy. It contains `newTypeFile` (JRadioButton) and `name` (JTextField) among other components.
