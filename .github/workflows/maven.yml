@@ -23,8 +23,7 @@ jobs:
         distribution: 'corretto'
         cache: 'maven'
 
-    - name: Install xvfb
-      run: sudo apt-get install -y xvfb
-        
-    - name: Build and Test with Maven
-      run: xvfb-run --auto-servernum mvn -B package
+    - name: Set up virtual display
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: mvn -B package
