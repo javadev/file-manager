@@ -57,6 +57,7 @@ class FileManagerTest {
     @BeforeEach
     void setUp() {
         fileManager = new FileManager();
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Test
